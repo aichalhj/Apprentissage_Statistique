@@ -1,0 +1,12 @@
+# Ignorer les fichiers logs
+*.log
+
+# Ignorer le répertoire node_modules
+node_modules/
+
+# Ignorer les fichiers compilés
+*.class
+
+#Ignorer les fichiers html
+*.html
+
