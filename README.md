@@ -23,7 +23,7 @@ Le dépôt est organisé de la manière suivante :
 
 ### Documents PDF
 - **`TP_ML_SVM.pdf`** : énoncé officiel du TP.
-- **`TP3_SVM_LAHJIOUJ.pdf`** : version finale du TP rendue.
+- **`TP_SVM_LAHJIOUJ_Aicha.pdf`** : version finale du TP rendue.
 
 ### Fichiers LaTeX
 - **`TP3_SVM_LAHJIOUJ.tex`** : fichier source LaTeX du rendu du TP.
