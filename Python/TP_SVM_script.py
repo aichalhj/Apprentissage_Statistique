@@ -87,6 +87,26 @@ plt.scatter([], [], color='blue', label='Classe 1')
 plt.scatter([], [], color='orange', label='Classe 2')  # Classe 2 en orange
 plt.legend(loc='best') 
 plt.show()
+
+
+#%%
+
+#Sans validation croisée
+
+clf_linear2 = SVC(kernel='linear')
+clf_linear2.fit(X_train, y_train)
+print('Generalization score for linear kernel: %s, %s' %
+      (clf_linear2.score(X_train, y_train),
+       clf_linear2.score(X_test, y_test)))
+
+#plot the frontiere
+def f_linear2(xx):
+    """Classifier: needed to avoid warning due to shape issues"""
+    return clf_linear2.predict(xx.reshape(1, -1))
+plt.figure()
+frontiere(f_linear2, X, y)
+plt.title("Frontière de décision SVM linéaire sans VC")
+plt.show()
 #%%
 #QUESTION 2
 
@@ -113,6 +133,26 @@ plt.title("Frontière de décision SVM polynomiale")
 plt.scatter([], [], color='blue', label='Classe 1')  
 plt.scatter([], [], color='orange', label='Classe 2')  # Classe 2 en orange
 plt.legend(loc='best') 
+plt.show()
+
+
+#%%
+
+#Sans validation croisée
+
+clf_poly2 = SVC(kernel='poly')
+clf_poly2.fit(X_train, y_train)
+print('Generalization score for polynomial kernel: %s, %s' %
+    (clf_poly2.score(X_train, y_train),
+    clf_poly2.score(X_test, y_test)))
+
+def f_poly2(xx):
+    """Classifier: needed to avoid warning due to shape issues"""
+    return clf_poly2.predict(xx.reshape(1, -1))
+# plot the frontiere
+plt.figure()
+frontiere(f_poly2, X_train, y_train, w=None, step=50, alpha_choice=1)
+plt.title("Frontière de décision SVM polynomiale sans CV")
 plt.show()
 
 #%%
@@ -290,43 +330,44 @@ X_noisy = X_noisy[np.random.permutation(X.shape[0])]
 X_noisy_train, X_noisy_test, y_train, y_test = train_test_split(X_noisy, y, test_size=0.5)
 
 
-# Fonction pour évaluer le modèle SVM
-def evaluate_svm(_X_train, _X_test, _y_train, _y_test, C_values):
-    test_scores = []
+def run_svm_cv2(_X, _y):
+    # Diviser les données en ensemble d'entraînement et de test
+    _indices = np.random.permutation(_X.shape[0])
+    _train_idx, _test_idx = _indices[:_X.shape[0] // 2], _indices[_X.shape[0] // 2:]
+    _X_train, _X_test = _X[_train_idx, :], _X[_test_idx, :]
+    _y_train, _y_test = _y[_train_idx], _y[_test_idx]
 
-    for C in C_values:
-        # Création du modèle SVM avec le noyau linéaire et un paramètre C donné
-        svm = SVC(kernel='linear', C=C)
-        svm.fit(_X_train, _y_train)
+    # Définir les paramètres pour la recherche
+    _parameters = {'kernel': ['linear'], 'C': list(np.logspace(-3, 3, 5))}
+    _svr = SVC()
+    _clf_linear = GridSearchCV(_svr, _parameters, return_train_score=False)
+    _clf_linear.fit(_X_train, _y_train)
 
-        # Évaluation sur les données de test
-        score = svm.score(_X_test, _y_test)
-        test_scores.append(score)
+    # Récupérer les scores de test
+    test_scores = _clf_linear.cv_results_['mean_test_score']
+    Cs = _parameters['C']
 
-    return test_scores
+    return Cs, test_scores
 
-# Paramètres de régularisation C à tester
-C_values = np.logspace(-3, 3, 10)
+# Exécuter pour les données non bruitées
+Cs, test_scores_clean = run_svm_cv2(X, y)
 
-# Evaluation sur les données sans bruit
-scores_clean = evaluate_svm(X_train, X_test, y_train, y_test, C_values)
+# Exécuter pour les données bruitées
+Cs, test_scores_noisy = run_svm_cv2(X_noisy, y)
 
-# Evaluation sur les données bruitées
-scores_noisy = evaluate_svm(X_noisy_train, X_noisy_test, y_train, y_test, C_values)
-
-# Tracer les résultats
+# Tracer les scores de test seulement
 plt.figure(figsize=(10, 6))
-plt.plot(C_values, scores_clean, label='Score de test (Données Bruités)', marker='o')
-plt.plot(C_values, scores_noisy, label='Score de test (Données non Bruités)', marker='o')
-plt.xscale('log')
-plt.xlabel('Paramètre de régularisation C (log scale)')
-plt.ylabel('Score')
-plt.title('Score de test en fonction de C pour les données bruitées et non bruitées')
+plt.plot(Cs, test_scores_clean, label='Test score ', marker='o')
+plt.plot(Cs, test_scores_noisy, label='Test score (bruitée)', marker='o', color='orange')
+
+# Configurations supplémentaires du graphique
+plt.xscale('log')  # C est sur une échelle logarithmique
+plt.xlabel('C (log scale)')
+plt.ylabel('Test Score')
+plt.title('Évolution des scores de test en fonction de C ')
 plt.legend()
 plt.grid(True)
 plt.show()
-
-run_svm_cv(X_noisy, y)
 
 #%%
 #QUESTION 6
