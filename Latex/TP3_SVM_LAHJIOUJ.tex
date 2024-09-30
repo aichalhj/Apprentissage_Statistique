@@ -1,0 +1,551 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsfonts}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{mathptmx}
+\usepackage{amsthm}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{pdfpages}
+\usepackage{bbold}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{minted}
+\usepackage{color}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[backend=biber,style=alphabetic,]{biblatex}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{lmodern}
+\pagenumbering{arabic}
+\usepackage{amsthm}
+\usepackage{todonotes} % define the \todo block useful for comments
+\author{LAHJIOUJ Aicha }
+\date{ }
+\usepackage[tikz]{bclogo}
+\usepackage{xcolor}
+\addbibresource{main.bib}
+\begin{document}
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\center 
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{SSD.png}
+\end{figure}
+
+
+
+\textsc{\Large Master 2 Statistiques et Sciences des Données }\\[1cm] % Major heading such as course name
+\HRule \\[0.4cm]
+{ \huge \bfseries Travaux Pratique \\ Support Vector Machines }\\[0.4cm]
+\HRule \\[1.5cm]
+\begin{center}
+\begin{Large}
+LAHJIOUJ Aïcha \\
+
+\hspace{4cm}
+
+
+\end{Large}
+\end{center}
+    
+
+
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=0.25\linewidth]{UM.png}
+    \label{UM}
+\end{figure}
+\begin{Large} Année 2024 - 2025 \\
+\end{Large}
+
+\end{titlepage}
+
+
+
+Les Support Vector Machines (SVM) sont des algorithmes d'apprentissage supervisé utilisés principalement pour la classification. Leur principe fondamental repose sur la recherche d'un hyperplan qui sépare les différentes classes de données, tout en maximisant la marge entre elles.
+Cette approche permet de garantir une meilleure généralisation sur de nouvelles observations.
+\\
+
+Dans un premier temps, nous allons nous intéresser au jeu de données Iris mise à disposition sur Python.
+
+Il contient 150 échantillons de fleurs d'iris, répartis en trois espèces : Iris setosa, Iris versicolor et Iris virginica. Chaque échantillon est décrit par quatre caractéristiques :
+\begin{itemize}
+    \item Longueur du sépale
+    \item Largeur du sépale
+    \item Longueur du pétale
+    \item Largeur du pétale
+\end{itemize}
+\\
+
+Nous allons classifier la classe 1 contre la classe 2 du data set iris en utilisant les deux premières variables et un noyau linéaire, en laissant la moitié des données de côté. 
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{plot_iris.png}
+    \caption{Répartition des différentes espèces de fleurs selon les deux premières variables }
+    \label{fig:enter-label}
+\end{figure}
+
+\pagebreak
+Notre objectif est d'évaluer la capacité de généralisation du modèle.
+
+
+\section{Question 1}
+
+
+
+
+\section*{Synthèse du Modèle SVM avec validation croisée}
+
+\begin{enumerate}
+    \item \textbf{Mélange des données :} Les données sont mélangées aléatoirement pour éviter les biais liés à un ordre spécifique.
+    
+    \item \textbf{Division des ensembles :} Les données sont séparées en deux ensembles : 
+    \begin{itemize}
+        \item Entraînement (50\%)
+        \item Test (50\%)
+    \end{itemize}
+    
+    \item \textbf{Paramètres :} Le paramètre de régularisation $C$ varie de $10^{-3}$ à $10^{3}$ sur une échelle logarithmique.
+    
+    \item \textbf{Optimisation :} Les paramètres du modèle SVM sont optimisés via validation croisée, en divisant l'ensemble d'entraînement en cinq sous-ensembles pour cinq itérations d'entraînement et validation.
+    
+    \item \textbf{Entraînement et évaluation :} Le modèle est entraîné sur les données d'entraînement avec les paramètres optimaux, puis évalué :
+    \begin{itemize}
+        \item Score moyen d'entraînement (10 itérations) : $0.75$ (indiquant une bonne performance sur les données d'entraînement).
+        \item Score moyen de test (10 itérations) : $0.67$ (inférieur au score d'entraînement, suggérant une capacité de généralisation limitée).
+    \end{itemize}
+    
+    \item \textbf{Analyse des performances :} La différence entre les scores d'entraînement et de test peut indiquer un léger sur-apprentissage, signifiant que le modèle s'adapte trop aux spécificités des données d'entraînement.
+\end{enumerate}
+
+\pagebreak
+
+
+Nous allons maintenant observer la frontière de décision :
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{iris_frontiere_lin.png}
+    \caption{Frontière de décision SVM linéaire}
+    \label{fig:enter-label}
+\end{figure}
+
+
+
+La distribution des points montre que certains points de Classe 1 apparaissent dans la région de Classe 2 et vice-versa, ce qui indique que le modèle peut avoir des difficultés à correctement séparer les deux classes dans ces zones.\\
+
+
+Cette tendance est confirmée par la matrice de confusion ci-dessous, avec un taux d'erreur de $44 \%$ .
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{confusion_matrix_iris.png}
+    \caption{Matrice de Confusion}
+    \label{fig:enter-label}
+\end{figure}
+
+Les hyper-paramètres sont sélectionnés par validation croisée à l'aide la fonction \texttt{GridSearchCV}. Nous allons maintenant nous intéresser au cas sans la validation croisée, à l’aide de seulement la fonction SVC et un noyau linéaire. Nous obtenons un score d'entrainement moyen (10 itérations) de $0.75$, et un score de test moyen (10 itérations) de $0.58$.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{frontiere_lin_sans_VC.png}
+    \caption{Frontière de décisions avec SVM linéaire sans Validation Croisée}
+    \label{fig:enter-label}
+\end{figure}
+
+Nous observons que le score d'entraînement reste constant, tandis que le score de test est plus élevé lors de la validation croisée. Cela s'explique par une optimisation des paramètres obtenue grâce à cette méthode.
+\\ 
+
+Néanmoins, l'erreur reste d'environ 0,4, ce qui indique un taux d'erreur relativement élevé. De plus, l'écart entre le score sur les données d'entrainement et de test est assez important, de l'ordre $0.15$, ce qui un signe de sur-apprentissage.
+Nous pouvons  donc en conclure que le modèle linéaire n'est pas l'idéal pour nos données, et qu'il faudrait penser à une autre méthode afin d'améliorer les résultats.
+
+
+
+\pagebreak
+
+
+\section{Question 2}
+
+Nous allons maintenant nous intéresser au noyau polynomial. \\
+
+Nous allons tout d'abord optimiser les paramètres à l'aide de la validation croisée, puis sans validation croisée.
+Nous obtenons les frontières de décisions suivantes :
+
+
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iris_frontiere_pol.png}
+        \caption{Frontière de décision SVM polynomiale}
+        \label{fig:sans_vc}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{frontiere_poly_sans_VC.png}
+        \caption{Sans Validation Croisée}
+        \label{fig:avec_vc}
+    \end{subfigure}
+    \caption{Comparaison des frontières de décision}
+    \label{fig:comparaison}
+\end{figure}
+
+
+Nous allons maintenant comparer les scores d'entrainement et de test, avec et sans validation croisée.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|c|c|}
+        \hline
+        & \textbf{Score d'entraînement} & \textbf{Score de test} \\ 
+        \hline
+        \textbf{Avec Validation Croisée} & 0.70 & 0.67 \\ 
+        \hline
+        \textbf{Sans Validation Croisée} & 0.62 & 0.60 \\ 
+        \hline
+    \end{tabular}
+    \caption{Scores avec et sans validation croisée}
+\end{table}
+
+
+
+
+
+L'écart entre les scores d'entraînement et de test a été réduit, mais demeure en faveur du score d'entraînement, ce qui est tout à fait logique. Le modèle performe mieux sur les données sur lesquelles il a été entraîné. En revanche, une différence significative apparaît entre le score d'entraînement avec et sans validation croisée.
+
+Lorsque nous appliquons la validation croisée avec un noyau polynomial, il est intéressant de noter que, dans la plupart des cas, le degré du polynôme sélectionné est de 1. Cela signifie que, malgré notre choix initial d'un noyau polynomial pour modéliser des relations plus complexes, le modèle opte souvent pour une solution linéaire.
+
+Cela dit, certaines frontières générées avec le noyau polynomial ont effectivement l'apparence d'un polynôme.
+
+Avec la validation croisée, nous observons une légère amélioration du score, ce qui suggère l'existence de relations non linéaires, bien que celles-ci minoritaire.\\
+
+
+
+
+
+Nous constatons que la méthode du noyau polynomiale n'apporte pas d'avantage significatif par rapport au noyau linéaire, ce qui laisse présagé qu'une autre méthode comme celle du noyau gaussien, peut-être mieux adaptées aux données.
+
+
+\section{Question 3 (Bonus)}
+
+
+
+L'un des paramètres les plus importants de l'algorithme SVM est le coefficient $C$ . Afin d'étudier son influence, nous allons utiliser une application interactive permettent de comprendre l'impact des différents paramètres des SVM. Pour cela, nous allons lancer le script \texttt{svm\_gui.py} mis à notre disposition. 
+
+\begin{figure}[ht]
+    \centering
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{GUI_C1.png}
+        \caption{C=1}
+        \label{fig:figure6}
+    \end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{GUI_C001png.png}
+        \caption{C=0.01}
+        \label{fig:figure7}
+    \end{minipage}\hfill
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{GUI_C0001.png}
+        \caption{C=0.001}
+        \label{fig:figure8}
+    \end{minipage}
+\end{figure}
+
+
+Le paramètre de régulation $C$ détermine le niveau de tolérance aux erreurs. Il influence ainsi la flexibilité ou la rigidité avec laquelle le SVM construit l'hyperplan de séparation entre les classes.
+
+Ce paramètre a également un impact sur la taille de la fenêtre de séparation des classes, qui est de 2 $\gamma$ où $\gamma$ représente la marge maximale.
+
+
+Nous pouvons donc observer, pour chaque valeur de $C$, les différents vecteurs supports (cf. figures \ref{fig:figure6}, \ref{fig:figure7} et \ref{fig:figure8}).
+
+
+
+
+\subsection*{Grand $C$}
+
+\begin{itemize}
+    \item Plus $C$ est grand, plus la marge est petite, et donc moins le modèle est tolérant aux erreurs.
+    \item Le modèle accorde une grande importance à la minimisation des erreurs d'entraînement, au détriment de la généralisation.
+    \item Risque de sur-apprentissage.
+\end{itemize}
+
+\subsection*{Petit $C$}
+
+\begin{itemize}
+    \item Lorsque $C$ est plus petit, la marge est plus importante, rendant le modèle plus souple face aux erreurs.
+    \item Un petit $C$ rend le modèle plus général, car il ne cherche pas à séparer parfaitement les classes.
+    \item Risque de sous-apprentissage
+\end{itemize}
+
+
+Nous allons maintenant générer un jeu de données très déséquilibré avec deux classes ($ 90\% $ vs $ 10\% $), et observé l'influence de $C$ sur les résultats.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{noisy_data.png}
+    \caption{Distribution des deux classes}
+    \label{fig:enter-label}
+\end{figure}
+
+Nous allons pour cela entrainer un SVM avec un noyau linéaire, et observer l'influence du paramètre de régulation $C$ sur le score.
+
+\section*{Résultats des expériences}
+
+Les résultats obtenus pour différentes valeurs de \( C \) sont présentés ci-dessous.
+
+
+\begin{table}[th]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        C & Score & Matrice de Confusion & Taux de prédiction 1 à tort\\
+        \hline
+        $0.001$ & $0.8633$ & $\begin{pmatrix} 259 & 0 \\ 41 & 0 \end{pmatrix}$ & $13.6667 \%$ \\
+        \hline
+        $0.01$ & $0.87$ & $\begin{pmatrix} 259 & 0 \\ 39 & 2 \end{pmatrix}$ & $13 \%$ \\
+        \hline
+        $1$ & $0.9033$ & $\begin{pmatrix} 258 & 1 \\ 28 & 13 \end{pmatrix}$ & $9.333 \%$ \\
+        \hline
+        $100$ & $0.9033$ & $\begin{pmatrix} 258 & 1 \\ 28 & 13 \end{pmatrix}$ & $9.333 \%$ \\
+        \hline       
+    \end{tabular}
+    \caption{Récapitulatif des résultats}
+    \label{tab:my_label}
+\end{table}
+Nous constatons de plus que le score augmente au fur à mesure que l'on augmente le paramètre $C$, avant de se stabiliser.\\
+
+Nous observons rapidement, grâce aux matrices de confusion, que le modèle a tendance à prédire à tort la classe majoritaire de manière fréquente. En réalité, presque toutes les erreurs du modèle proviennent de ce phénomène.
+
+\\
+
+
+
+
+Notre objectif va être d'y remédier, pour cela, nous allons utiliser le paramètre $"class_weight"$ afin de pouvoir pondérer les erreurs en fonction de la rareté de la classe. Les erreurs sur la classe la moins présente seront donc plus lourdement pénalisées, ce qui permettra au modèle de mieux prendre en compte cette classe au moment de l'entrainement.
+
+
+Nous obtenons les résultats suivants :
+
+\begin{center}
+\begin{tabular}{|c|c|}
+        \hline
+         Score & Matrice de Confusion \\
+        \hline
+         $0.92 $ & $\begin{pmatrix} 258 & 1 \\ 23 & 18 \end{pmatrix}$ \\
+        \hline
+\end{tabular}
+\end{center}
+
+Le taux d'erreur provoqué par la prédiction de la classe 1 à tort à diminuer, passant à $7.667 \%$.
+Nous remarquons que le score a augmenté, atteignant $0.92$, ce qui permet de dire que grâce à la pondération des classes, le modèle a mieux appris.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Question 4}
+
+Nous allons maintenant nous intéresser à la classification d'image. Pour cela, nous allons utiliser les données "Labeled Faces in the Wild" (LFW) qui contient des images de visages de célébrités. Nous allons conserver seulement les personnes ayant au moins 70 photos. 
+
+
+Ici, deux personnes sont sélectionnées, par exemple "Tony Blair" et "Colin Powell".
+
+Les images des deux personnes sélectionnées sont regroupées.
+y est le vecteur de labels : 0 pour la première personne (Tony Blair) et 1 pour la seconde (Colin Powell).On se placera donc dans le cadre de la classification binaire.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{tony_colin.png}
+    \caption{Image de Tony Blair et Colin Powell tiré aléatoirement }
+    \label{fig:enter-label}
+\end{figure}
+
+Nous générons cette fois encore un échantillon de test et d'entrainement (50\% chacun), et nous allons entrainer un classifieur SVM avec un noyau linéaire.
+
+Nous allons maintenant visualiser les prédictions faites par le modèle sur les données de test.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{pred_tony_colin.png}
+    \caption{Prédiction du modèle}
+    \label{fig:enter-label}
+\end{figure}
+
+Nous remarquons que dans notre cas, sur 12 prédictions, il y a une seule erreur de prédictions, ce qui représente un très bon résultat.
+
+Nous allons maintenant nous intéresser au paramètre de régularisation $C$ pour le classificateur SVM linéaire.
+Nous entrainons le modèle pour des valeurs $C$ allant de $10^{-5}$ à $10^{5}$ et sélectionne la valeur $C$ qui permet d'obtenir le meilleur score.
+
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{C optimal} & \textbf{Best Score} & \textbf{Temps d'exécution} \\ \hline
+$0.0001$           & $0.9105263157894737$ & $3.678$ s                   \\ \hline
+\end{tabular}
+\caption{Résultats des paramètres optimaux}
+\end{table}
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{C_linear.png}
+    \caption{Évolution du score en fonction de la valeur de $C$}
+    \label{fig:enter-label}
+\end{figure}
+
+En observant le graphique, nous constatons que le score augmente de manière exponentielle entre $10^{-5}$ à $10^{-4}$ et atteint son maximum à $10^{-4}$, avant de converger vers un score de $0.89$.
+
+Dans l'ensemble, la capacité de généralisation du modèle semble être satisfaisante, comme en témoigne le score relativement élevé.
+
+Nous allons maintenant étudier une visualisation des coefficients (les poids) du modèle SVM après l'entraînement, sous la forme d'une carte de chaleur. Ces poids indiquent quelles sont les parties de l'image influant le plus  sur la classification.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{coef_tony_colin.png}
+    \caption{Carte de chaleur des coefficients}
+    \label{fig:enter-label}
+\end{figure}
+
+Les zones claires représentent les pixels ayant un coefficient élevé, ce qui signifie que ces zones sont particulièrement importantes pour la décision du modèle. Ces zones correspondent aux traits du visage communs entre Tony Blair et Colin Powell. \\
+
+À l'inverse, les régions sombres sont des pixels ayant des coefficients proches de zéro, ce qui illustre le fait qu'ils ne jouent pas un rôle important dans la classification.
+
+
+
+\section{Question 5}
+
+
+Nous allons étudier l'effet d'un ajout de variables de nuisances sur la performance de prédiction.
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{test_score_vs_C.png}
+    \caption{Comparaison des scores obtenue avec les données bruitées et non bruitées}
+    \label{fig:enter-label}
+\end{figure}
+
+Nous observons clairement à partir du graphique ci-dessus que la performance prédictive diminue de manière significative, avec une réduction d'environ $0.35$, passant d'environ $0.91$ à $0.57$. Cette baisse marquée souligne les limites du modèle dans la gestion des données bruitées.
+
+
+
+\section{Question 6}
+
+
+Afin d'améliorer la performance du modèle sur les données bruitées, nous allons procéder à une réduction des dimensions avec une ACP.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Nombre de composantes} & \textbf{Score d'entraînement} & \textbf{Score de test} \\
+        \hline
+        3   & 0.6368421052631579 & 0.6052631578947368 \\
+        \hline
+        10  & 0.6578947368421053 & 0.5842105263157895 \\
+        \hline
+        20  & 0.7210526315789474 & 0.5736842105263158 \\
+        \hline
+        80  & 0.8789473684210526 & 0.5105263157894737 \\
+        \hline
+        90  & 0.9736842105263158 & 0.5052631578947369 \\
+        \hline
+        120 & 0.8473684210526315 & 0.4789473684210526 \\
+        \hline
+        150 & 0.8894736842105263 & 0.5263157894736842 \\
+        \hline
+    \end{tabular}
+    \caption{Scores d'entraînement et de test en fonction du nombre de composantes}
+    \label{tab:scores}
+\end{table}
+
+Nous constatons que plus le nombre de composantes est élevé, plus le score sur les données d'entrainement est élevé, alors que le score sur les données de test est en moyenne de $0.5$, ce qui semble nous illustrer un phénomène de sur-apprentissage. \\
+
+Dans le cadre d'un nombre de composantes assez faible, l'écart entre le score des données d'entrainement et de test est toujours présent en faveur des données d'entrainement, mais cette différence est beaucoup moins flagrante.
+
+Nous pouvons donc en déduire que la réduction des dimensions semble permettre de réduire l'impact du sur-apprentissage.
+
+Le temps d'exécution du code étant très long, pour un nombre de composantes inférieur à 80, je n'ai malheureusement pas pu approfondir l'analyse. 
+
+
+
+\section{Conclusion}
+
+Ce TP sur les Support Vector Machines (SVM) a permis d'explorer différentes approches de classification supervisée à travers l'utilisation de plusieurs types de noyaux, ainsi que des techniques d'optimisation des hyperparamètres comme la validation croisée.\\
+
+L'étude a mis en évidence l'efficacité des noyaux linéaires et polynomiaux, ainsi que leurs limites.
+Nous avons aussi étudié l'influence du paramètre $C$ joue un rôle clé dans la capacité du modèle à équilibrer la précision et la généralisation.
+
+L’ajout de variables de nuisance a montré une diminution marquée des performances prédictives, ce qui a ensuite été partiellement compensé par l’utilisation de la réduction de dimension via l'Analyse en Composantes Principales (ACP). Cependant, la réduction des dimensions n'a pas totalement éliminé le sur-apprentissage, soulignant la nécessité d’envisager d'autres méthodes plus adaptés aux données bruitées.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+
+\end{document}
